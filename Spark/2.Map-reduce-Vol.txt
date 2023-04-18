@@ -1,0 +1,74 @@
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1niwD6z1LoqugVIk_wDsMTyHjHcFtL6as' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1niwD6z1LoqugVIk_wDsMTyHjHcFtL6as" -O stocks1 && rm -rf /tmp/cookies.txt
+
+hadoop fs -copyFromLocal  stocks1 /user/arindamr/data
+
+
+Find the maximum volume for each stock symbol
+
+val stocks = sc.textFile("hdfs://nn.insofe.edu.in:8020/user/arindamr/dataset1/stocks")
+val splits = stocks.map(record => record.split(","))
+val symvol = splits.map(arr => (arr(1), arr(7).toInt))
+val maxvol = symvol.reduceByKey((vol1, vol2) => Math.max(vol1, vol2))
+maxvol.collect().foreach(println)
+
+stocks = sc.textFile("/user/root/datasets/stocks/stocksCP")
+splits = stocks.map(lambda record: record.split(","))
+symvol = splits.map(lambda arr: (arr[1], int(arr[7])))
+maxvol = symvol.reduceByKey(lambda vol1, vol2: max(vol1, vol2))
+print maxvol.collect()
+
+APPL, 20 30 50 100
+FB, 50 900 60 
+
+APPL,20
+APPL,40 APPL,40
+FB,90 
+
+http://172.16.0.118:8081/
+
+maxvol.toDebugString
+
+http://3.109.133.174:4041/ - change port as needed
+
+
+----- Python ----
+stocks = sc.textFile("/user/root/datasets/stocks/stocksCP")
+splits = stocks.map(lambda record: record.split(","))
+symvol = splits.map(lambda arr: (arr[1], int(arr[7])))
+maxvol = symvol.reduceByKey(lambda vol1, vol2: max(vol1, vol2))
+print maxvol.collect()
+
+---- cartesian ----
+
+val a = sc.parallelize(List("A","B","C"),3)
+val b = sc.parallelize(List("X","Y"),2)
+val c = a.cartesian(b)
+c.collect().foreach(println)
+
+
+---- Sample ----
+stocks= sc.parallelize([("a","1"),("b","2"),("c","3")])
+a =stocks.map(lambda x: ("A",int(x[1])))
+b = a.reduceByKey(lambda u,v: u+v)
+print b.collect()
+
+
+
+
+
+
+
+
+
+
+
+
+for i in maxvol.collect(): print(i)
+
+print stocks.toDebugString()
+print splits.toDebugString()
+print symvol.toDebugString()
+print maxvol.toDebugString()
+
+maxvol.count()
+

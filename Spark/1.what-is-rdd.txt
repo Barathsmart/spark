@@ -1,0 +1,35 @@
+https://drive.google.com/file/d/141Afz-1wOWdGgDCPIh6amVO6gqLWPrcC/view?usp=sharing
+
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=141Afz-1wOWdGgDCPIh6amVO6gqLWPrcC' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=141Afz-1wOWdGgDCPIh6amVO6gqLWPrcC" -O sample-log && rm -rf /tmp/cookies.txt
+
+hadoop fs -ls /user/arindamr
+hadoop fs -mkdir /user/arindamr/data
+hadoop fs -copyFromLocal  sample-log /user/arindamr/data
+
+vi /etc/hadoop/conf/core-site.xml
+
+<property>
+      <name>fs.defaultFS</name>
+      <value>hdfs://nn.insofe.edu.in:8020</value>
+      <final>true</final>
+    </property>
+
+--Spark shell
+spark-shell 
+
+val logfile = sc.textFile("/user/arindamr/data/sample-log")
+val errors = logfile.filter(_.contains("ERROR"))
+val hdfs = errors.filter(_.contains("hadoop"))
+hdfs.count()
+
+42280
+
+http://3.109.133.174:4042/
+
+
+--- pyspark ---
+
+logfile = sc.textFile("/user/root/datasets/log-bigger")
+errors = logfile.filter(lambda x: "ERROR" in x)
+hdfs = errors.filter(lambda y: "hadoop" in y)
+hdfs.count()
